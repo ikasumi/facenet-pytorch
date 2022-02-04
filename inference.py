@@ -18,6 +18,11 @@ def detect(input_file_path, save_path=None):
     return img_org, img_cropped
 
 def crop_faces(pil_img, img_cropped, margin=None):
+    """
+    margin: [top, right, left, bottom] の順番で記載
+    1.0 = 顔の矩形の長い方の辺 * 1.0 倍の長さを margin としてとる
+    記載例： [1.0, 2.0, 2.0, 3.0]
+    """
     faces = []
     for i, quad in enumerate(img_cropped):
         left, top, right, bottom = quad
@@ -55,5 +60,8 @@ if __name__ == "__main__":
         pil_crop_faces = crop_faces(pil_img, img_cropped, margin=[1.0, 2.0, 2.0, 3.0])
         for i, pil_crop_face in enumerate(pil_crop_faces):
             pil_crop_face.save(save_path.replace(".png", "_" + str(i) + ".png"))
+            pil_crop_face_bg = Image.alpha_composite(Image.new("RGBA", pil_crop_face.size, (222, 226, 224, 255)), pil_crop_face)
+            # pil_crop_face_bg = Image.alpha_composite(pil_crop_face, Image.new("RGBA", pil_crop_face.size, (222, 226, 224, 255)))
+            pil_crop_face_bg.save(save_path.replace(".png", "_bg_" + str(i) + ".png"))
         print(img_cropped)
         print(img_cropped.shape)
